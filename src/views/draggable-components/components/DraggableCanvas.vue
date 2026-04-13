@@ -67,9 +67,8 @@
 </template>
 
 <script setup lang="ts" name="draggableCanvas">
-import { ref } from 'vue'
 import type { DraggableComponent, ResizeHandle } from '@/types/draggable-components'
-import { AVAILABLE_COMPONENTS } from '@/types/draggable-components'
+import { useComponentDrag, useComponentResize } from '../hooks'
 import ChartRenderer from '@/components/renderers/ChartRenderer.vue'
 import TableRenderer from '@/components/renderers/TableRenderer.vue'
 import TextRenderer from '@/components/renderers/TextRenderer.vue'
@@ -94,12 +93,6 @@ const emit = defineEmits<{
   (e: 'delete-component', id: string): void
 }>()
 
-const isDragging = ref(false)
-const isResizing = ref(false)
-const dragOffset = ref({ x: 0, y: 0 })
-const currentComponentId = ref<string>()
-const resizeHandle = ref<ResizeHandle>()
-
 const handleDragOver = (event: DragEvent) => {
   event.preventDefault()
   if (event.dataTransfer) {
@@ -122,122 +115,34 @@ const handleDrop = (event: DragEvent) => {
   }
 }
 
-const handleComponentMouseDown = (event: MouseEvent, id: string) => {
-  if (isResizing.value) return
-  
-  isDragging.value = true
-  currentComponentId.value = id
-  
-  const component = props.components.find(c => c.id === id)
-  if (component) {
-    dragOffset.value = {
-      x: event.clientX - component.x,
-      y: event.clientY - component.y
-    }
-  }
-  
-  document.addEventListener('mousemove', handleMouseMove)
-  document.addEventListener('mouseup', handleMouseUp)
+const handleMoveComponent = (id: string, x: number, y: number) => {
+  emit('move-component', id, x, y)
 }
 
-const handleResizeStart = (event: MouseEvent, id: string, handle: ResizeHandle) => {
-  isResizing.value = true
-  currentComponentId.value = id
-  resizeHandle.value = handle
-  
-  const component = props.components.find(c => c.id === id)
-  if (component) {
-    emit('select-component', id)
-  }
-  
-  document.addEventListener('mousemove', handleResizeMove)
-  document.addEventListener('mouseup', handleResizeEnd)
+const handleResizeComponent = (id: string, width: number, height: number) => {
+  emit('resize-component', id, width, height)
 }
 
-const handleMouseMove = (event: MouseEvent) => {
-  if (!isDragging.value || !currentComponentId.value) return
-  
-  const component = props.components.find(c => c.id === currentComponentId.value)
-  if (component) {
-    const newX = event.clientX - dragOffset.value.x
-    const newY = event.clientY - dragOffset.value.y
-    emit('move-component', currentComponentId.value, newX, newY)
-  }
-}
+const {
+  isDragging,
+  currentComponentId,
+  handleComponentMouseDown,
+  handleMouseUp
+} = useComponentDrag({
+  components: props.components,
+  onMoveComponent: handleMoveComponent
+})
 
-const handleResizeMove = (event: MouseEvent) => {
-  if (!isResizing.value || !currentComponentId.value) return
-  
-  const component = props.components.find(c => c.id === currentComponentId.value)
-  if (!component) return
-  
-  const minSize = AVAILABLE_COMPONENTS.find(c => c.type === component.type)?.minSize
-  const minWidth = minSize?.width || 100
-  const minHeight = minSize?.height || 80
-  
-  let newWidth = component.width
-  let newHeight = component.height
-  let newX = component.x
-  let newY = component.y
-  
-  switch (resizeHandle.value) {
-    case 'e':
-      newWidth = Math.max(minWidth, event.clientX - component.x)
-      break
-    case 'w':
-      newWidth = Math.max(minWidth, component.width + (component.x - event.clientX))
-      newX = event.clientX
-      break
-    case 's':
-      newHeight = Math.max(minHeight, event.clientY - component.y)
-      break
-    case 'n':
-      newHeight = Math.max(minHeight, component.height + (component.y - event.clientY))
-      newY = event.clientY
-      break
-    case 'se':
-      newWidth = Math.max(minWidth, event.clientX - component.x)
-      newHeight = Math.max(minHeight, event.clientY - component.y)
-      break
-    case 'sw':
-      newWidth = Math.max(minWidth, component.width + (component.x - event.clientX))
-      newHeight = Math.max(minHeight, event.clientY - component.y)
-      newX = event.clientX
-      break
-    case 'ne':
-      newWidth = Math.max(minWidth, event.clientX - component.x)
-      newHeight = Math.max(minHeight, component.height + (component.y - event.clientY))
-      newY = event.clientY
-      break
-    case 'nw':
-      newWidth = Math.max(minWidth, component.width + (component.x - event.clientX))
-      newHeight = Math.max(minHeight, component.height + (component.y - event.clientY))
-      newX = event.clientX
-      newY = event.clientY
-      break
-  }
-  
-  if (newX !== component.x || newY !== component.y) {
-    emit('move-component', currentComponentId.value, newX, newY)
-  }
-  
-  emit('resize-component', currentComponentId.value, newWidth, newHeight)
-}
-
-const handleMouseUp = () => {
-  isDragging.value = false
-  currentComponentId.value = undefined
-  document.removeEventListener('mousemove', handleMouseMove)
-  document.removeEventListener('mouseup', handleMouseUp)
-}
-
-const handleResizeEnd = () => {
-  isResizing.value = false
-  currentComponentId.value = undefined
-  resizeHandle.value = undefined
-  document.removeEventListener('mousemove', handleResizeMove)
-  document.removeEventListener('mouseup', handleResizeEnd)
-}
+const {
+  isResizing,
+  resizeHandle,
+  handleResizeStart,
+  handleResizeEnd
+} = useComponentResize({
+  components: props.components,
+  onMoveComponent: handleMoveComponent,
+  onResizeComponent: handleResizeComponent
+})
 
 const handleComponentClick = (event: MouseEvent, id: string) => {
   event.stopPropagation()
