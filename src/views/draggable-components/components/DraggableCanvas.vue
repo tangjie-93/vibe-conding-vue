@@ -177,6 +177,8 @@ const handleResizeMove = (event: MouseEvent) => {
   
   let newWidth = component.width
   let newHeight = component.height
+  let newX = component.x
+  let newY = component.y
   
   switch (resizeHandle.value) {
     case 'e':
@@ -184,18 +186,14 @@ const handleResizeMove = (event: MouseEvent) => {
       break
     case 'w':
       newWidth = Math.max(minWidth, component.width + (component.x - event.clientX))
-      if (newWidth !== component.width) {
-        emit('move-component', currentComponentId.value, event.clientX, component.y)
-      }
+      newX = event.clientX
       break
     case 's':
       newHeight = Math.max(minHeight, event.clientY - component.y)
       break
     case 'n':
       newHeight = Math.max(minHeight, component.height + (component.y - event.clientY))
-      if (newHeight !== component.height) {
-        emit('move-component', currentComponentId.value, component.x, event.clientY)
-      }
+      newY = event.clientY
       break
     case 'se':
       newWidth = Math.max(minWidth, event.clientX - component.x)
@@ -204,27 +202,23 @@ const handleResizeMove = (event: MouseEvent) => {
     case 'sw':
       newWidth = Math.max(minWidth, component.width + (component.x - event.clientX))
       newHeight = Math.max(minHeight, event.clientY - component.y)
-      if (newWidth !== component.width) {
-        emit('move-component', currentComponentId.value, event.clientX, component.y)
-      }
+      newX = event.clientX
       break
     case 'ne':
       newWidth = Math.max(minWidth, event.clientX - component.x)
       newHeight = Math.max(minHeight, component.height + (component.y - event.clientY))
-      if (newHeight !== component.height) {
-        emit('move-component', currentComponentId.value, component.x, event.clientY)
-      }
+      newY = event.clientY
       break
     case 'nw':
       newWidth = Math.max(minWidth, component.width + (component.x - event.clientX))
       newHeight = Math.max(minHeight, component.height + (component.y - event.clientY))
-      if (newWidth !== component.width) {
-        emit('move-component', currentComponentId.value, event.clientX, component.y)
-      }
-      if (newHeight !== component.height) {
-        emit('move-component', currentComponentId.value, component.x, event.clientY)
-      }
+      newX = event.clientX
+      newY = event.clientY
       break
+  }
+  
+  if (newX !== component.x || newY !== component.y) {
+    emit('move-component', currentComponentId.value, newX, newY)
   }
   
   emit('resize-component', currentComponentId.value, newWidth, newHeight)
