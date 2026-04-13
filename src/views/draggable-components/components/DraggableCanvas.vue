@@ -257,26 +257,6 @@ const handleCanvasClick = () => {
 const handleDeleteComponent = (id: string) => {
   emit('delete-component', id)
 }
-
-const ChartRenderer = {
-  template: '<div class="component-renderer chart-renderer">📊 图表内容</div>'
-}
-
-const TableRenderer = {
-  template: '<div class="component-renderer table-renderer">📋 表格内容</div>'
-}
-
-const TextRenderer = {
-  template: '<div class="component-renderer text-renderer">📝 文本内容</div>'
-}
-
-const ImageRenderer = {
-  template: '<div class="component-renderer image-renderer">🖼️ 图片内容</div>'
-}
-
-const MetricRenderer = {
-  template: '<div class="component-renderer metric-renderer">📈 指标卡内容</div>'
-}
 </script>
 
 <style scoped lang="less">
