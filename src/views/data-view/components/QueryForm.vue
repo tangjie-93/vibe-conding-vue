@@ -84,7 +84,6 @@ const handleReset = () => {
   display: flex;
   flex-wrap: nowrap;
   gap: 16px;
-  margin-bottom: 20px;
   align-items: center;
 }
 

@@ -102,7 +102,6 @@ const handleDelete = (id: string) => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 24px;
-  margin-bottom: 24px;
 }
 
 @media (max-width: 768px) {
