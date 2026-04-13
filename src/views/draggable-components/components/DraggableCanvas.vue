@@ -27,8 +27,24 @@
       </div>
       
       <div class="component-content">
-        <component
-          :is="getComponentRenderer(component.type)"
+        <ChartRenderer
+          v-if="component.type === 'chart'"
+          :component="component"
+        />
+        <TableRenderer
+          v-else-if="component.type === 'table'"
+          :component="component"
+        />
+        <TextRenderer
+          v-else-if="component.type === 'text'"
+          :component="component"
+        />
+        <ImageRenderer
+          v-else-if="component.type === 'image'"
+          :component="component"
+        />
+        <MetricRenderer
+          v-else-if="component.type === 'metric'"
           :component="component"
         />
       </div>
@@ -54,13 +70,11 @@
 import { ref } from 'vue'
 import type { DraggableComponent, ResizeHandle } from '@/types/draggable-components'
 import { AVAILABLE_COMPONENTS } from '@/types/draggable-components'
-import {
-  ChartRenderer,
-  TableRenderer,
-  TextRenderer,
-  ImageRenderer,
-  MetricRenderer
-} from '@/components/renderers'
+import ChartRenderer from '@/components/renderers/ChartRenderer.vue'
+import TableRenderer from '@/components/renderers/TableRenderer.vue'
+import TextRenderer from '@/components/renderers/TextRenderer.vue'
+import ImageRenderer from '@/components/renderers/ImageRenderer.vue'
+import MetricRenderer from '@/components/renderers/MetricRenderer.vue'
 
 interface Props {
   components: DraggableComponent[]
@@ -85,17 +99,6 @@ const isResizing = ref(false)
 const dragOffset = ref({ x: 0, y: 0 })
 const currentComponentId = ref<string>()
 const resizeHandle = ref<ResizeHandle>()
-
-const getComponentRenderer = (type: string) => {
-  const componentMap: Record<string, any> = {
-    chart: ChartRenderer,
-    table: TableRenderer,
-    text: TextRenderer,
-    image: ImageRenderer,
-    metric: MetricRenderer
-  }
-  return componentMap[type] || TextRenderer
-}
 
 const handleDragOver = (event: DragEvent) => {
   event.preventDefault()
