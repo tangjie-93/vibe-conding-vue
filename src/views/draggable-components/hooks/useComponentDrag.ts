@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import type { DraggableComponent } from '@/types/draggable-components'
 
 export interface DragOffset {
@@ -18,7 +18,7 @@ export interface UseComponentDragReturn {
   handleMouseUp: () => void
 }
 
-export function useComponentDrag(options: UseComponentDragOptions = {}) {
+export function useComponentDrag(options: UseComponentDragOptions) {
   const { components, onMoveComponent } = options
 
   const isDragging = ref(false)

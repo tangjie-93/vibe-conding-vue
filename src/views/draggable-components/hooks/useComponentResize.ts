@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import type { DraggableComponent, ResizeHandle } from '@/types/draggable-components'
 import { AVAILABLE_COMPONENTS } from '@/types/draggable-components'
 
@@ -16,14 +16,14 @@ export interface UseComponentResizeReturn {
   handleResizeEnd: () => void
 }
 
-export function useComponentResize(options: UseComponentResizeOptions = {}) {
+export function useComponentResize(options: UseComponentResizeOptions) {
   const { components, onMoveComponent, onResizeComponent } = options
 
   const isResizing = ref(false)
   const currentComponentId = ref<string>()
   const resizeHandle = ref<ResizeHandle>()
 
-  const handleResizeStart = (event: MouseEvent, id: string, handle: ResizeHandle) => {
+  const handleResizeStart = (_event: MouseEvent, id: string, handle: ResizeHandle) => {
     isResizing.value = true
     currentComponentId.value = id
     resizeHandle.value = handle
