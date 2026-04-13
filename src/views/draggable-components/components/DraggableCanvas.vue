@@ -54,6 +54,13 @@
 import { ref } from 'vue'
 import type { DraggableComponent, ResizeHandle } from '@/types/draggable-components'
 import { AVAILABLE_COMPONENTS } from '@/types/draggable-components'
+import {
+  ChartRenderer,
+  TableRenderer,
+  TextRenderer,
+  ImageRenderer,
+  MetricRenderer
+} from '@/components/renderers'
 
 interface Props {
   components: DraggableComponent[]
