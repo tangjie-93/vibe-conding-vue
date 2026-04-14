@@ -1,25 +1,7 @@
 {
   "disabledSkills": [
     "frontend-architect",
-    "frontend-expert",
-    "typescript-coding-standards",
-    "vue-component-communication",
-    "vue-component-script",
-    "vue-component-structure",
-    "vue-component-style",
-    "vue-component-template",
-    "vue-hook-standards"
+    "frontend-expert"
   ],
-  "autoEnable": false,
-  "notes": {
-    "frontend-architect": "功能被 rules + frontend-expert 替代",
-    "frontend-expert": "功能被 rules 替代",
-    "typescript-coding-standards": "功能被 003-typescript.md rule 替代",
-    "vue-component-communication": "功能被 004-vue-components.md rule 替代",
-    "vue-component-script": "功能被 004-vue-components.md rule 替代",
-    "vue-component-structure": "功能被 004-vue-components.md rule 替代",
-    "vue-component-style": "功能被 004-vue-components.md rule 替代",
-    "vue-component-template": "功能被 004-vue-components.md rule 替代",
-    "vue-hook-standards": "功能被 005-vue-hooks.md rule 替代"
-  }
+  "autoEnable": false
 }
